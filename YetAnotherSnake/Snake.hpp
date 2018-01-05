@@ -31,6 +31,8 @@ public:
   bool isOutOfBound() const; // Check if Snake is out of world's boundaries
   bool eatItself() const; // Check if Snake eats his trail
   
+  int score() const;
+  
 private:
   std::deque<Snake_cell> cells_;
   Direction current_direction_;

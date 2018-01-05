@@ -119,4 +119,10 @@ bool Snake::eatItself() const
   return false;
 }
 
+int Snake::score() const
+{
+  // Initial Snake's size is 3
+  return (cells_.size() - 3);
+}
+
 
