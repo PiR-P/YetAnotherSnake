@@ -28,6 +28,7 @@ public:
   void move(); // 
   void draw() const; // Calls to OpenGL functions
   
+  bool collideWithPellet(const Cell& pellet);
   bool isOutOfBound() const; // Check if Snake is out of world's boundaries
   bool eatItself() const; // Check if Snake eats his trail
   

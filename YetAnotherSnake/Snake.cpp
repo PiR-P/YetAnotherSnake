@@ -96,6 +96,17 @@ void Snake::draw() const
   }
 }
 
+bool Snake::collideWithPellet(const Cell& pellet)
+{
+  for(auto it = cells_.begin(); it != cells_.cend(); ++it)
+  {
+    const Snake_cell& cell = *it;
+    if(cell == pellet)
+      return true;
+  }
+  return false;
+}
+
 bool Snake::isOutOfBound() const
 {
   for(auto it = cells_.begin(); it != cells_.cend(); ++it)

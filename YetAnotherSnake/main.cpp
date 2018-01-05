@@ -24,7 +24,6 @@ void change_display();
 void init();
 void special(int key, int, int);
 void keyboard(unsigned char key, int x, int y);
-void empty_keyboard(unsigned char key, int x, int y);
 void timer(int extra);
 /***********************************************/
 
@@ -37,19 +36,15 @@ void draw_text(const std::string text)
 
 void toggle_game()
 {
-  // If a game was in progress...
-  if(game_in_progress)
-  {
-    glutKeyboardFunc(keyboard);
-  }
-  else
+  // If game session was already stopped
+  if(!game_in_progress)
   {
     snake = Snake();
     pellet = Cell();
-    glutKeyboardFunc(empty_keyboard);
     // Reset movement
     glutTimerFunc(TIMER_DELAY, timer, 0);
   }
+  
   // Start / stop the game
   game_in_progress = !game_in_progress;
 }
@@ -175,13 +170,17 @@ void special(int key, int, int)
 void keyboard(unsigned char key, int x, int y)
 {
   switch(key) {
-    case 's': toggle_game(); break;
+    case 's':
+      if(game_in_progress) // Disallow when game in progress
+        return;
+      toggle_game();
+      break;
+    case 32:
+      snake.move();
+      snake.move();
+      break;
     default: break;
   }
-}
-
-void empty_keyboard(unsigned char key, int x, int y)
-{
 }
 
 void timer(int extra)
@@ -193,8 +192,7 @@ void timer(int extra)
     glutPostRedisplay();
     return;
   }
-  const Snake_cell& front_cell = snake[0];
-  if(front_cell == pellet)
+  if(snake.collideWithPellet(pellet))
   {
     ++snake;
     pellet = Cell();
@@ -217,7 +215,7 @@ int main(int argc, char* argv[])
   
   glutReshapeFunc(reshape_game);
   glutSpecialFunc(special);
-  glutKeyboardFunc(empty_keyboard);
+  glutKeyboardFunc(keyboard);
   glutDisplayFunc(display_game);
   glutTimerFunc(TIMER_DELAY, timer, 0);
   
