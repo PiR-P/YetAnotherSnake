@@ -11,10 +11,11 @@
 GLuint board { 0 };
 Snake snake;
 Cell pellet;
-bool play_a_game { true };
+bool game_in_progress { true };
 
 /** Prototypes **/
 void draw_text(const char* text);
+void toggle_game();
 GLuint make_board();
 void display_game();
 void reshape_game(int w, int h);
@@ -22,7 +23,8 @@ void display_info();
 void change_display();
 void init();
 void special(int key, int, int);
-void keyboard(char key, int, int);
+void keyboard(unsigned char key, int x, int y);
+void empty_keyboard(unsigned char key, int x, int y);
 void timer(int extra);
 /***********************************************/
 
@@ -31,6 +33,25 @@ void draw_text(const std::string text)
   size_t len = text.size();
   for (size_t i=0;i<len;i++)
     glutStrokeCharacter(GLUT_STROKE_ROMAN, text[i]);
+}
+
+void toggle_game()
+{
+  // If a game was in progress...
+  if(game_in_progress)
+  {
+    glutKeyboardFunc(keyboard);
+  }
+  else
+  {
+    snake = Snake();
+    pellet = Cell();
+    glutKeyboardFunc(empty_keyboard);
+    // Reset movement
+    glutTimerFunc(TIMER_DELAY, timer, 0);
+  }
+  // Start / stop the game
+  game_in_progress = !game_in_progress;
 }
 
 GLuint make_board()
@@ -72,8 +93,12 @@ void display_game()
   // Draw board
   glCallList(board);
   glColor3f(1.0f, 1.0f, 1.0f);
-  pellet.draw();
-  snake.draw();
+  // Draw ONLY if game is in progress
+  if(game_in_progress)
+  {
+    pellet.draw();
+    snake.draw();
+  }
   display_info();
   glutSwapBuffers();
 }
@@ -96,14 +121,25 @@ void display_info()
   glPushMatrix();
   glLoadIdentity();
   gluOrtho2D(0, 1000, 0, 1000);
-  // Operation on drawing
+  // Draw score
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
-  glTranslatef(20, 920, 0.0f);
+  glTranslatef(20, 950, 0.0f);
   glScalef(scale, scale, 1.0f);
   draw_text(std::to_string(snake.score()));
   glPopMatrix();
+  // Draw info message
+  if(!game_in_progress)
+  {
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(400, 950, 0.0f);
+    glScalef(scale, scale, 1.0f);
+    draw_text(std::string("Press 's' to start a new game."));
+    glPopMatrix();
+  }
   // Next matrix popped will be the 3D drawing
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
@@ -136,7 +172,15 @@ void special(int key, int, int)
   }
 }
 
-void keyboard(char key, int, int)
+void keyboard(unsigned char key, int x, int y)
+{
+  switch(key) {
+    case 's': toggle_game(); break;
+    default: break;
+  }
+}
+
+void empty_keyboard(unsigned char key, int x, int y)
 {
 }
 
@@ -145,8 +189,9 @@ void timer(int extra)
   snake.move();
   if(snake.eatItself() || snake.isOutOfBound())
   {
-    snake = Snake();
-    pellet = Cell();
+    toggle_game();
+    glutPostRedisplay();
+    return;
   }
   const Snake_cell& front_cell = snake[0];
   if(front_cell == pellet)
@@ -172,7 +217,7 @@ int main(int argc, char* argv[])
   
   glutReshapeFunc(reshape_game);
   glutSpecialFunc(special);
-  //glutKeyboardFunc(keyboard);
+  glutKeyboardFunc(empty_keyboard);
   glutDisplayFunc(display_game);
   glutTimerFunc(TIMER_DELAY, timer, 0);
   
