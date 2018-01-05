@@ -20,7 +20,7 @@ std::ostream& operator<<(std::ostream& os, const Snake& snake)
 Snake::Snake() : current_direction_(Direction::north)
 {
   const float first_cell { WORLD_MAX / 2.0f };
-  
+  // Create a snake with - initially - three cells
   cells_.emplace_back(first_cell + 2 * CELL_SIZE, first_cell);
   cells_.emplace_back(first_cell + CELL_SIZE, first_cell);
   cells_.emplace_back(first_cell, first_cell);
@@ -51,6 +51,7 @@ void Snake::setDirection(Direction new_direction)
 {
   if(current_direction_ != new_direction)
   {
+    // Prevent the snake from going "backwards"
     if(std::abs(current_direction_ - new_direction) != 2)
       current_direction_ = new_direction;
   }
@@ -70,6 +71,7 @@ void Snake::move()
   Snake_cell &front_cell = cells_[0];
   switch(current_direction_)
   {
+    // Make most of the assignment operator overloading
     case Direction::north:
       front_cell = Snake_cell(front_cell.origin().first + CELL_SIZE, front_cell.origin().second);
       break;
@@ -133,7 +135,7 @@ bool Snake::eatItself() const
 int Snake::score() const
 {
   // Initial Snake's size is 3
-  return (cells_.size() - 3);
+  return ((int) cells_.size() - 3);
 }
 
 

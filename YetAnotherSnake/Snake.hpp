@@ -20,14 +20,16 @@ public:
   Snake_cell& operator[](int i); // Access Snake's i-th cell
   Snake& operator++(); // Increment Snake's size
   Snake& operator=(const Snake& new_snake);
+  // Use for debugging
   friend std::ostream& operator<< (std::ostream &os, const Snake &snake);
   
   Direction getDirection() const;
   
   void setDirection(Direction new_direction);
-  void move(); // 
+  void move(); // Update snake's position according to its direction
   void draw() const; // Calls to OpenGL functions
   
+  // Check if any snake's cell collides with the pellet
   bool collideWithPellet(const Cell& pellet);
   bool isOutOfBound() const; // Check if Snake is out of world's boundaries
   bool eatItself() const; // Check if Snake eats his trail

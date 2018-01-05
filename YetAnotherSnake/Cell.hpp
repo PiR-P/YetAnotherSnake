@@ -32,10 +32,10 @@ public:
   const bool isOutOfBound() const;
   /** Call to OpenGL drawing functions **/
   void draw() const;
-  /** Overloading equal to operator **/
-  bool operator==(const Cell& operand) const;
-  Cell& operator=(const Cell& new_cell);
-  std::pair<float, float> origin() const;
+  /** Overloading operators **/
+  bool operator==(const Cell& operand) const; // Check if there is an overlap
+  Cell& operator=(const Cell& new_cell); // Assignment
+  std::pair<float, float> origin() const; // Basic getter
   
 protected:
   std::pair<float, float> origin_;

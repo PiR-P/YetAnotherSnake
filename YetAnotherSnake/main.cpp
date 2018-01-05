@@ -135,6 +135,15 @@ void display_info()
     draw_text(std::string("Press 's' to start a new game."));
     glPopMatrix();
   }
+  // Draw hint message
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  glTranslatef(20, 20, 0.0f);
+  glScalef(0.1, 0.1, 1.0f);
+  glColor3f(1.0f, 1.0f, 0.0f);
+  draw_text(std::string("Use space bar for boost movement"));
+  glPopMatrix();
   // Next matrix popped will be the 3D drawing
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();

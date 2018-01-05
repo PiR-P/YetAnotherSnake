@@ -14,6 +14,7 @@
 class Snake_cell : public Cell
 {
 public:
+  /** A cell is defined by it's x and z coordinates **/
   Snake_cell(const float origin_x, const float origin_y);
   
   /** Update cell's coordinate accordingly **/

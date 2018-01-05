@@ -10,6 +10,11 @@
 
 Cell::Cell()
 {
+  /**
+   Generate random coordinates for the pellet,
+   depending on the number of cells in the grid so that the pellet doesn't spawn
+   outside the world
+  **/
   int rand_x(static_cast<int>(rand() % (CELLS_NB - 1) + 1));
   int rand_y(static_cast<int>(rand() % (CELLS_NB - 1 ) + 1));
   origin_ = std::make_pair(
@@ -39,6 +44,7 @@ void Cell::draw() const
 
 bool Cell::operator==(const Cell &operand) const
 {
+  // Need to tolerate an espilon when comparing two floats
   return(
     (std::abs(origin_.first - operand.origin_.first) <= .001f) &&
     (std::abs(origin_.second - operand.origin_.second) <= .001f)
