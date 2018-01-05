@@ -11,17 +11,27 @@
 GLuint board { 0 };
 Snake snake;
 Cell pellet;
-
+bool play_a_game { true };
 
 /** Prototypes **/
+void draw_text(const char* text);
 GLuint make_board();
 void display_game();
-void reshape(int w, int h);
+void reshape_game(int w, int h);
+void display_info();
+void change_display();
 void init();
 void special(int key, int, int);
 void keyboard(char key, int, int);
 void timer(int extra);
 /***********************************************/
+
+void draw_text(const std::string text)
+{
+  size_t len = text.size();
+  for (size_t i=0;i<len;i++)
+    glutStrokeCharacter(GLUT_STROKE_ROMAN, text[i]);
+}
 
 GLuint make_board()
 {
@@ -64,16 +74,41 @@ void display_game()
   glColor3f(1.0f, 1.0f, 1.0f);
   pellet.draw();
   snake.draw();
+  display_info();
   glutSwapBuffers();
 }
 
-void reshape(int w, int h)
+void reshape_game(int w, int h)
 {
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(40.0, 1.0, 1.0, 5.0);
 }
+
+void display_info()
+{
+  const float scale = 0.25f;
+  // Change color for text drawing
+  glColor3f(1.0f, 1.0f, 1.0f);
+  // Change projection to 2D Projection
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  gluOrtho2D(0, 1000, 0, 1000);
+  // Operation on drawing
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  glTranslatef(20, 920, 0.0f);
+  glScalef(scale, scale, 1.0f);
+  draw_text(std::to_string(snake.score()));
+  glPopMatrix();
+  // Next matrix popped will be the 3D drawing
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+}
+
 
 void init()
 {
@@ -108,7 +143,6 @@ void keyboard(char key, int, int)
 void timer(int extra)
 {
   snake.move();
-  
   if(snake.eatItself() || snake.isOutOfBound())
   {
     snake = Snake();
@@ -120,7 +154,6 @@ void timer(int extra)
     ++snake;
     pellet = Cell();
   }
-  
   glutPostRedisplay();
   glutTimerFunc(TIMER_DELAY, timer, 0);
 }
@@ -137,9 +170,9 @@ int main(int argc, char* argv[])
   
   glutCreateWindow("Isometric");
   
-  glutReshapeFunc(reshape);
+  glutReshapeFunc(reshape_game);
   glutSpecialFunc(special);
-//  glutKeyboardFunc(keyboard);
+  //glutKeyboardFunc(keyboard);
   glutDisplayFunc(display_game);
   glutTimerFunc(TIMER_DELAY, timer, 0);
   
