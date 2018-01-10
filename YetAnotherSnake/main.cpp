@@ -9,6 +9,7 @@
 #include "Snake.hpp"
 
 GLuint board { 0 };
+double g_eye_z { 1.75 };
 Snake snake;
 Cell pellet;
 bool game_in_progress { true };
@@ -80,7 +81,7 @@ void display_game()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   gluLookAt(
-    1.75, 1.75, 1.75,
+    1.75, 1.75, g_eye_z,
     0.5, 0, 0.5,
     0, 1, 0
   );
@@ -179,6 +180,17 @@ void special(int key, int, int)
 void keyboard(unsigned char key, int x, int y)
 {
   switch(key) {
+    /** Change perspective **/
+    case 'z':
+      g_eye_z = ((g_eye_z >= 3.25) ? 3.25 : g_eye_z += 0.25 );
+      std::cerr << g_eye_z << std::endl;
+      glutPostRedisplay();
+      break;
+    case 'Z':
+      g_eye_z = ((g_eye_z <= 1) ? 1 : g_eye_z -= 0.25 );
+      std::cerr << g_eye_z << std::endl;
+      glutPostRedisplay();
+      break;
     case 's':
       if(game_in_progress) // Disallow when game in progress
         return;
